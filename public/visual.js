@@ -10,9 +10,9 @@ function init() {
 		camera.position.y = 500;
 	*/
 	camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3500 );
-		camera.position.z = 60;
-		camera.position.x = 100;
-		camera.position.y = 100;
+		camera.position.z = -60;
+		camera.position.x = -100;
+		camera.position.y = -100;
 		controls = new THREE.OrbitControls( camera );
 		controls.addEventListener( 'change', render );
 

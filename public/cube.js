@@ -27,6 +27,7 @@ function Cube(size,x,y,z){
 			}
 		}
 	}
+	this.voxel[this.padding-1][this.padding+20-1][this.padding]=0;
 	this.x = x;
 	this.y = y;
 	this.z = z;
@@ -78,6 +79,8 @@ function CubeUpdate(){
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xffff0f ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xffff0f ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0xffff0f ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0xffff0f ) ));
 									faceIndex +=4; 
 								}
 								if(ac[1]){ // Right
@@ -87,8 +90,10 @@ function CubeUpdate(){
 										new THREE.Vector3((ix*10),(iy*10)-10, (iz*10) ),
 										new THREE.Vector3((ix*10),(iy*10), (iz*10) )
 									);
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xff0fff ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xff0fff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xff6fff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xff6fff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0xff6fff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0xff6fff ) ));
 									faceIndex +=4; 
 								}
 								if(ac[3]){ // Top
@@ -100,6 +105,8 @@ function CubeUpdate(){
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0x0fff0f ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0x0fff0f ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0x0fff0f ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0x0fff0f ) ));
 									faceIndex +=4; 
 								}
 								if(ac[2]){ // Bottom
@@ -111,6 +118,8 @@ function CubeUpdate(){
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0x00ffff ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0x00ffff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0x00ffff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0x00ffff ) ));
 									faceIndex +=4; 
 								}
 								if(ac[4]){ // Front
@@ -122,6 +131,8 @@ function CubeUpdate(){
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xff00ff ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xff00ff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0xff00ff ) ));
+									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0xff00ff ) ));
 									faceIndex +=4; 
 								}
 								if(ac[5]){ // Back
@@ -133,6 +144,8 @@ function CubeUpdate(){
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, 0xffff00 ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, 0xffff00 ));
+									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, 0xffff00 ));
+									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, 0xffff00 ));
 									faceIndex +=4; 
 								}
 							}
@@ -143,12 +156,11 @@ function CubeUpdate(){
 		}
 	}
 	var material = new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading,vertexColors: THREE.VertexColors  } );
-	mesh = new THREE.Mesh( geometry, material );
-	mesh.position.x=this.x;
-	mesh.position.y=this.y;
-	mesh.position.z=this.z;
-	scene.add(mesh);
-	console.log(mesh);
-	camera.lookAt(mesh);
-    	camera.updateProjectionMatrix();
+	this.mesh = new THREE.Mesh( geometry, material );
+	this.mesh.position.x=this.x;
+	this.mesh.position.y=this.y;
+	this.mesh.position.z=this.z;
+	scene.add(this.mesh);
+	this.mesh.rotateOnAxis(new THREE.Vector3(((this.padding*10)+(this.size*10)/2),((this.padding*10)+(this.size*10)/2),((this.padding*10)+(this.size*10)/2)),1);
+
 }
