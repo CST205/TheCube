@@ -13,17 +13,6 @@ function Cube(size){
 	this.rotateHappening = false;
 	this.cubeObject;
 	this.voxel = new Array();
-	/*for(var ix = 0;ix < (size+this.padding);ix++){
-		if(this.voxel[ix]== undefined)
-			this.voxel[ix]=new Array();
-		for(var iy = 0;iy < (size+this.padding);iy++){
-			if(this.voxel[ix][iy]== undefined)
-				this.voxel[ix][iy]=new Array();
-			for(var iz = 0;iz < (size+this.padding);iz++){
-				this.voxel[ix][iy][iz] = 0;
-			}
-		}
-	}*/
 	for(var ix = this.padding;ix < (size+this.padding);ix++){
 		if(this.voxel[ix]== undefined)
 			this.voxel[ix]=new Array();
