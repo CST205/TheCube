@@ -1,6 +1,6 @@
 var container, stats;
 var camera, scene, renderer;
-var cube=new Cube(20);
+var cube=new Cube(5);
 function buildAxis( src, dst, colorHex, dashed ) {
         var geom = new THREE.Geometry(),
             mat; 

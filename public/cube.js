@@ -1,9 +1,8 @@
-//front-0, back-1, left-2, right-3, top-4, bottom-5
 function Cube(size){
 	this.size=size;
 	this.angle=0;
-	this.speed=25;
-	this.padding = 4000;
+	this.speed=15;
+	this.padding = 50;
 	this.facingSide=0;
 	this.mesh;
 	this.beginxyz={
@@ -36,13 +35,13 @@ function Cube(size){
 			}
 		}
 	}
-	this.voxel[this.padding][this.padding+20-1][this.padding]=0;
-	this.voxel[this.padding][this.padding+20-1][this.padding+3]=0;
-	this.voxel[this.padding][this.padding+20-1][this.padding+10]=0;
 	this.x = -(this.padding*10+((this.size/2)*10));
 	this.y = -(this.padding*10+((this.size/2)*10));
 	this.z = -(this.padding*10+((this.size/2)*10));
 	this.rotate = CubeRotate;
+	this.edit = CubeEdit;
+	this.getFillPlots = CubeGetFillPlots;
+	this.getEmptyPlots = CubeGetEmptyPlots;
 	this.update = CubeUpdate;
 	this.navigate = navigateFromSide;
 	this.render = CubeRender;
@@ -53,9 +52,107 @@ function navigateFromSide(){
 	html += "z:"+(this.mesh.rotation.z/(2*Math.PI));
 	$("#cubedata").html(html);
 }
+function CubeGetEmptyPlots(x,y,z){
+    var plots = new Array();
+    for(var ix = 0;ix < (this.size+(this.padding*2));ix++){
+        if(this.voxel[ix]!= undefined){
+            for(var iy = 0;iy < (this.size+(this.padding*2));iy++){
+                if(this.voxel[ix][iy]!= undefined){
+                    for(var iz = 0;iz < (this.size+(this.padding*2));iz++){
+                        if(this.voxel[ix][iy][iz]!= undefined){
+                            var entry = checkExists(this.voxel,ix+x,iy+y,iz+z);
+                            if(entry){
+                                plots.push([ix+x,iy+y,iz+z]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return plots;
+}
+function CubeGetFillPlots(x,y,z){
+    var plots = new Array();
+    for(var ix = 0;ix < (this.size+(this.padding*2));ix++){
+        if(this.voxel[ix]!= undefined){
+            for(var iy = 0;iy < (this.size+(this.padding*2));iy++){
+                if(this.voxel[ix][iy]!= undefined){
+                    for(var iz = 0;iz < (this.size+(this.padding*2));iz++){
+                        if(this.voxel[ix][iy][iz]!= undefined){
+                            var entry = checkExists(this.voxel,ix+x,iy+y,iz+z);
+                            if(entry){
+                                plots.push([ix,iy,iz]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return plots;
+}
+function CubeEdit(){
+    var plots = new Array();
+    var act = Math.floor(Math.random()*2);
+    if(act==1){
+        switch(this.rotateDirection){
+            case 0: // LEFT
+                plots = this.getEmptyPlots(-1,0,0);
+            break;
+            case 1: // RIGHT
+                plots = this.getEmptyPlots(1,0,0);
+            break;
+            case 2: // top
+                plots = this.getEmptyPlots(0,1,0);
+            break;
+            case 3: // BOTTOM
+                plots = this.getEmptyPlots(0,-1,0);
+            break;
+            case 4: // FRONT
+                plots = this.getEmptyPlots(0,0,-1);
+            break;
+            case 5: // BACK
+                plots = this.getEmptyPlots(0,0,1);
+            break;
+        }
+    }else if(act==2 || act==0){
+        switch(this.rotateDirection){
+            case 0: // LEFT
+                plots = this.getFillPlots(-1,0,0);
+            break;
+            case 1: // RIGHT
+                plots = this.getFillPlots(1,0,0);
+            break;
+            case 2: // top
+                plots = this.getFillPlots(0,1,0);
+            break;
+            case 3: // BOTTOM
+                plots = this.getFillPlots(0,-1,0);
+            break;
+            case 4: // FRONT
+                plots = this.getFillPlots(0,0,-1);
+            break;
+            case 5: // BACK
+                plots = this.getFillPlots(0,0,1);
+            break;
+        }
+    }
+    var i = Math.floor((Math.random()*plots.length));
+    var plot = plots[i];
+    if(this.voxel[plot[0]]==undefined)
+        this.voxel[plot[0]]= new Array();
+    if(this.voxel[plot[0]][plot[1]]==undefined)
+        this.voxel[plot[0]][plot[1]]= new Array();
+    if(act==1){
+        this.voxel[plot[0]][plot[1]][plot[2]] = 1;
+    }else if(act==2 || act==0){
+        this.voxel[plot[0]][plot[1]][plot[2]] = 0;
+    }
+}
 function CubeRotate(){
 	if(!this.rotateHappening){
-		var temp = Math.floor(Math.random()*6);
+		var temp = Math.floor((Math.random()*6));
 		if(this.rotateDirection==temp){
 			this.rotate();
 			return;
@@ -70,7 +167,6 @@ function CubeRotate(){
 	
 }
 function CubeRender(){
-	
 	this.facingSide=this.rotateDirection;
 	if(this.rotateHappening && this.rotateCount<this.speed){
 		switch(this.rotateDirection){
@@ -160,10 +256,69 @@ function CubeRender(){
 			break;
 		}
 		this.rotateCount++;
-	}else{
+	}else if(this.rotateHappening){
+		this.edit();
 		this.rotateHappening = false;
+		switch(this.rotateDirection){
+			case 0: // LEFT
+				var toPosX = 0;
+				var toPosY = 0;
+				var toPosZ = 0;
+				this.update();
+				this.mesh.rotation.x=toPosX;
+				this.mesh.rotation.y=toPosY;
+				this.mesh.rotation.z=toPosZ;
+			break;
+			case 1: // RIGHT
+				var toPosX = 0;
+				var toPosY = 0;
+				var toPosZ = ((Math.PI/(this.speed*2))*this.speed)*2;
+				this.update();
+				this.mesh.rotation.x=toPosX;
+				this.mesh.rotation.y=toPosY;
+				this.mesh.rotation.z=toPosZ;
+			break;
+			case 2: // top
+				var toPosX = 0;
+				var toPosY = 0;
+				var toPosZ = ((Math.PI/(this.speed*2))*this.speed);
+				this.update();
+				this.mesh.rotation.x=toPosX;
+				this.mesh.rotation.y=toPosY;
+				this.mesh.rotation.z=toPosZ;
+			break;
+			case 3: // BOTTOM
+				var toPosX = 0;
+				var toPosY = 0;
+				var toPosZ = ((Math.PI/(this.speed*2))*this.speed)*3;
+				this.update();
+				this.mesh.rotation.x=toPosX;
+				this.mesh.rotation.y=toPosY;
+				this.mesh.rotation.z=toPosZ;
+			break;
+			case 4: // FRONT
+				var toPosX = 0;
+				var toPosY = ((Math.PI/(this.speed*2))*this.speed);
+				var toPosZ = 0;
+				this.update();
+				this.mesh.rotation.x=toPosX;
+				this.mesh.rotation.y=toPosY;
+				this.mesh.rotation.z=toPosZ;
+			break;
+			case 5: // BACK
+				var toPosX = 0;
+				var toPosY = ((Math.PI/(this.speed*2))*this.speed)*3;
+				var toPosZ = 0;
+				this.update();
+				this.mesh.rotation.x=toPosX;
+				this.mesh.rotation.y=toPosY;
+				this.mesh.rotation.z=toPosZ;
+			break;
+		}
+		//this.rotate();
 	}
 	this.navigate();
+	
 }
 function checkExists(vox,x,y,z){
 	if(vox[x]!=undefined)
@@ -185,11 +340,11 @@ function CubeUpdate(){
 	var centerCalc = (this.size/2)*10+(this.padding*10);
 	var faceIndex = 0;
 	var geometry = new THREE.Geometry();
-	for(var ix = 0;ix < (this.size+this.padding);ix++){
+	for(var ix = 0;ix < (this.size+(this.padding*2));ix++){
 		if(this.voxel[ix]!= undefined){
-			for(var iy = 0;iy < (this.size+this.padding);iy++){
+			for(var iy = 0;iy < (this.size+(this.padding*2));iy++){
 				if(this.voxel[ix][iy]!= undefined){
-					for(var iz = 0;iz < (this.size+this.padding);iz++){
+					for(var iz = 0;iz < (this.size+(this.padding*2));iz++){
 						if(this.voxel[ix][iy][iz]!= undefined){
 							ac = adjacentCheck(this.voxel,ix,iy,iz);
 							if(this.voxel[ix][iy][iz]==1){
@@ -278,6 +433,8 @@ function CubeUpdate(){
 			}
 		}
 	}
+	if(this.mesh)
+		scene.remove(this.mesh);
 	var material = new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors  } );
 	this.mesh = new THREE.Mesh( geometry, material );
 	this.mesh.position.x=5;
