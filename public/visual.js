@@ -52,7 +52,7 @@ function init() {
 	renderer = new THREE.WebGLRenderer( { antialias: true } );
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
-		renderer.setClearColor( 0xffffff );
+		renderer.setClearColor( 0x000000 );
 		renderer.shadowMapEnabled = true;
 		renderer.shadowMapSoft = true;
 		renderer.shadowMapBias = 0.0039;
@@ -87,5 +87,3 @@ function render() {
 	cube.render();
 	renderer.render( scene, camera );
 }
-init();
-animate();

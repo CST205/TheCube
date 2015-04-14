@@ -1,13 +1,17 @@
 function Cube(size,x,y,z){
+	this.settings={
+		onFinish:function(c){},
+		onInit:function(c){}
+	};
 	this.size=size;
 	this.angle=0;
-	this.cubeSize=40;
-	this.speed=60;
-	this.onFinish=function(){}
-	this.padding = 50;
+	this.cubeSize=70;
+	this.speed=15;
+	this.startTime=0;
+	this.padding = 10;
 	this.facingSide=0;
 	this.color=[0,0,0];
-	this.mesh;
+	this.mesh=false;
 	this.beginxyz={
 		x:0,y:0,z:0
 	};
@@ -142,13 +146,14 @@ function CubeEdit(){
         this.voxel[plot[0]][plot[1]][plot[2]] = 0;
     }
 }
-function CubeRotate(){
+function CubeRotate(startTime){
 	if(!this.rotateHappening){
 		var temp = Math.floor((Math.random()*6));
 		if(this.rotateDirection==temp){
-			this.rotate();
+			this.rotate(startTime);
 			return;
 		}
+		this.startTime = startTime;
 		this.rotateDirection = temp;
 		this.rotateHappening = true;
 		this.rotateCount = 0;
@@ -157,6 +162,17 @@ function CubeRotate(){
 		this.beginxyz.z=this.mesh.rotation.z;
 	}
 	
+}
+function rotationCalculation(this.mesh){
+	if(this.rotateCount+1<this.speed){
+		this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
+		this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
+		this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
+	}else{
+		this.mesh.rotation.x=toPosX;
+		this.mesh.rotation.y=toPosY;
+		this.mesh.rotation.z=toPosZ;
+	}
 }
 function CubeRender(){
 	this.facingSide=this.rotateDirection;
@@ -180,17 +196,9 @@ function CubeRender(){
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = ((Math.PI/(this.speed*2))*this.speed)*2;
-				if(this.rotateCount+1<this.speed){
-					this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-					this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-					this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
-				}else{
-					this.mesh.rotation.x=toPosX;
-					this.mesh.rotation.y=toPosY;
-					this.mesh.rotation.z=toPosZ;
-				}
+				
 			break;
-			case 2: // top
+			case 2: // TOP
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = ((Math.PI/(this.speed*2))*this.speed);
@@ -270,7 +278,7 @@ function CubeRender(){
 				this.mesh.rotation.y=toPosY;
 				this.mesh.rotation.z=toPosZ;
 			break;
-			case 2: // top
+			case 2: // TOP
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = ((Math.PI/(this.speed*2))*this.speed);
@@ -307,7 +315,7 @@ function CubeRender(){
 				this.mesh.rotation.z=toPosZ;
 			break;
 		}
-		
+		this.settings.onFinish(this);	
 	}
 	this.navigate();
 	
@@ -426,7 +434,7 @@ function CubeUpdate(){
 		}
 	}
 	/* SMOOTHING METHOD FOUND ON THREEJS examples*/
-	var modifier = new THREE.SubdivisionModifier( 0.01 );
+	var modifier = new THREE.SubdivisionModifier( 1 );
 	smooth = geometry.clone();
 	smooth.mergeVertices();
 	smooth.computeFaceNormals();
@@ -450,8 +458,11 @@ function CubeUpdate(){
 		}
 	}
 	/* END SMOOTHING METHOD */
-	if(this.mesh)
+	var init = true;
+	if(this.mesh!=false){
 		scene.remove(this.mesh);
+		init = false;
+	}
 	var material = [
 		new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors  } ),
 		new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true, opacity: 0.02, transparent: true } )
@@ -463,6 +474,7 @@ function CubeUpdate(){
 	this.mesh.receiveShadow = true;
 	this.mesh.position.z=this.z;
 	scene.add(this.mesh);
-	
+	if(init)
+		this.settings.onInit(this);
 	
 }
