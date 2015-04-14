@@ -1,9 +1,12 @@
-function Cube(size){
+function Cube(size,x,y,z){
 	this.size=size;
 	this.angle=0;
-	this.speed=15;
+	this.cubeSize=40;
+	this.speed=60;
+	this.onFinish=function(){}
 	this.padding = 50;
 	this.facingSide=0;
+	this.color=[0,0,0];
 	this.mesh;
 	this.beginxyz={
 		x:0,y:0,z:0
@@ -24,9 +27,9 @@ function Cube(size){
 			}
 		}
 	}
-	this.x = -(this.padding*10+((this.size/2)*10));
-	this.y = -(this.padding*10+((this.size/2)*10));
-	this.z = -(this.padding*10+((this.size/2)*10));
+	this.x = x;
+	this.y = y;
+	this.z = z;
 	this.rotate = CubeRotate;
 	this.edit = CubeEdit;
 	this.getFillPlots = CubeGetFillPlots;
@@ -304,7 +307,7 @@ function CubeRender(){
 				this.mesh.rotation.z=toPosZ;
 			break;
 		}
-		//this.rotate();
+		
 	}
 	this.navigate();
 	
@@ -326,7 +329,7 @@ function adjacentCheck(vox,x,y,z){
 	return [left,right,top,bottom,front,back];
 }
 function CubeUpdate(){
-	var centerCalc = (this.size/2)*10+(this.padding*10);
+	var centerCalc = ((this.size-2)/2)*this.cubeSize+(this.padding*this.cubeSize);
 	var faceIndex = 0;
 	var geometry = new THREE.Geometry();
 	for(var ix = 0;ix < (this.size+(this.padding*2));ix++){
@@ -339,80 +342,80 @@ function CubeUpdate(){
 							if(this.voxel[ix][iy][iz]==1){
 								if(ac[0]){ // left - RED
 									geometry.vertices.push(
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-10-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-10-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-centerCalc, (iz*10)-10-centerCalc )
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc )
 									);
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xFA574B ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xFA574B ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xFA574B ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xFA574B ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0xFA574B ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0xFA574B ) ));
 									faceIndex +=4; 
 								}
 								if(ac[1]){ // Right - YELLOW
 									geometry.vertices.push(
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-10-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-10-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-centerCalc, (iz*10)-centerCalc )
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-centerCalc )
 									);
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xF4FA4B ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xF4FA4B ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xF4FA4B ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xF4FA4B ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0xF4FA4B ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0xF4FA4B ) ));
 									faceIndex +=4; 
 								}
 								if(ac[3]){ // Top - GREEN
 									geometry.vertices.push(
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-centerCalc, (iz*10)-10-centerCalc )
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc )
 									);
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0x5AFA4B ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0x5AFA4B ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0x5AFA4B ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0x5AFA4B ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0x5AFA4B ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0x5AFA4B ) ));
 									faceIndex +=4; 
 								}
 								if(ac[2]){ // Bottom - Light blue
 									geometry.vertices.push(
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-10-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-10-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-10-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-10-centerCalc, (iz*10)-10-centerCalc )
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc )
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0x4BF7FA ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0x4BF7FA ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0x4BF7FA ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0x4BF7FA ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0x4BF7FA ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0x4BF7FA ) ));
 									faceIndex +=4; 
 								}
 								if(ac[4]){ // Front - Purple
 									geometry.vertices.push(
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-10-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-10-centerCalc, (iz*10)-10-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-centerCalc, (iz*10)-10-centerCalc )
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-this.cubeSize-centerCalc )
 									);
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xF14BFA ) ));
-									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xF14BFA ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1, new THREE.Color( 0xF14BFA ) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color( 0xF14BFA ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color( 0xF14BFA ) ));
 									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color( 0xF14BFA ) ));
 									faceIndex +=4; 
 								}
 								if(ac[5]){ // Back - Orange
 									geometry.vertices.push(
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-10-centerCalc,(iy*10)-10-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-10-centerCalc, (iz*10)-centerCalc ),
-										new THREE.Vector3((ix*10)-centerCalc,(iy*10)-centerCalc, (iz*10)-centerCalc )
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-this.cubeSize-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-this.cubeSize-centerCalc, (iz*this.cubeSize)-centerCalc ),
+										new THREE.Vector3((ix*this.cubeSize)-centerCalc,(iy*this.cubeSize)-centerCalc, (iz*this.cubeSize)-centerCalc )
 									);
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+1, faceIndex+2, 1,new THREE.Color( 0xF2C613) ));
 									geometry.faces.push(new THREE.Face3( faceIndex, faceIndex+2, faceIndex+3, 1, new THREE.Color(0xF2C613) ));
-									geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color(0xF2C613) ));
-									geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color(0xF2C613) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex+2, faceIndex+1, faceIndex, 1, new THREE.Color(0xF2C613) ));
+									//geometry.faces.push(new THREE.Face3( faceIndex+3, faceIndex+2, faceIndex, 1, new THREE.Color(0xF2C613) ));
 									faceIndex +=4; 
 								}
 							}
@@ -422,13 +425,43 @@ function CubeUpdate(){
 			}
 		}
 	}
+	/* SMOOTHING METHOD FOUND ON THREEJS examples*/
+	var modifier = new THREE.SubdivisionModifier( 0.01 );
+	smooth = geometry.clone();
+	smooth.mergeVertices();
+	smooth.computeFaceNormals();
+	smooth.computeVertexNormals();
+	modifier.modify( smooth );
+	var faceABCD = "abcd";
+	this.color[0]=Math.round(Math.random()* (100 - 40) + 40);
+	this.color[1]=Math.round(Math.random()* (100 - 40) + 40);
+	this.color[2]=Math.round(Math.random()* (100 - 40) + 40);
+	var color, f, p, n, vertexIndex;
+	color = new THREE.Color("rgb("+this.color[0]+"%,"+this.color[1]+"%,"+this.color[2]+"%)" );
+	for ( i = 0; i < smooth.faces.length; i ++ ) {
+
+		f  = smooth.faces[ i ];
+		n = ( f instanceof THREE.Face3 ) ? 3 : 4;
+		for( var j = 0; j < n; j++ ) {
+			vertexIndex = f[ faceABCD.charAt( j ) ];
+			p = smooth.vertices[ vertexIndex ];
+			
+			f.vertexColors[ j ] = color;
+		}
+	}
+	/* END SMOOTHING METHOD */
 	if(this.mesh)
 		scene.remove(this.mesh);
-	var material = new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors  } );
-	this.mesh = new THREE.Mesh( geometry, material );
-	this.mesh.position.x=5;
-	this.mesh.position.y=5;
-	this.mesh.position.z=5;
+	var material = [
+		new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors  } ),
+		new THREE.MeshBasicMaterial( { color: 0x555555, wireframe: true, opacity: 0.02, transparent: true } )
+	];
+	this.mesh = new THREE.SceneUtils.createMultiMaterialObject( smooth, material );
+	this.mesh.position.x=this.x;
+	this.mesh.position.y=this.y;
+	this.mesh.castShadow = true;
+	this.mesh.receiveShadow = true;
+	this.mesh.position.z=this.z;
 	scene.add(this.mesh);
 	
 	

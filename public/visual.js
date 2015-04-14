@@ -1,6 +1,6 @@
 var container, stats;
 var camera, scene, renderer;
-var cube=new Cube(5);
+var cube=new Cube(5,5,5,5);
 function buildAxis( src, dst, colorHex, dashed ) {
         var geom = new THREE.Geometry(),
             mat; 
@@ -53,15 +53,26 @@ function init() {
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.setClearColor( 0xffffff );
+		renderer.shadowMapEnabled = true;
+		renderer.shadowMapSoft = true;
+		renderer.shadowMapBias = 0.0039;
+		renderer.shadowMapDarkness = 0.8;
+		renderer.shadowMapWidth = 1024;
+		renderer.shadowMapHeight = 1024;
 		container.appendChild( renderer.domElement );
-	
+		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.6 );
+		directionalLight.position.set( 20, 20, 20 );
+		directionalLight.rotation.set(Math.PI,Math.PI,Math.PI)
+		directionalLight.castShadow = true;
+		scene.add( directionalLight );
+
 	stats = new Stats();
 		stats.domElement.style.position = 'absolute';
 		stats.domElement.style.top = '0px';
 		container.appendChild( stats.domElement );
 	cube.update();
-	axes = buildaxes(1000);
-	scene.add(axes);
+	//axes = buildaxes(1000);
+	//scene.add(axes);
 }
 function animate() {
 	requestAnimationFrame( animate );
