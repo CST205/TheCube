@@ -8,7 +8,7 @@ function Cube(size,x,y,z){
 	this.cubeSize=70;
 	this.speed=15;
 	this.startTime=0;
-	this.padding = 10;
+	this.padding = 100;
 	this.facingSide=0;
 	this.color=[0,0,0];
 	this.mesh=false;
@@ -163,15 +163,15 @@ function CubeRotate(startTime){
 	}
 	
 }
-function rotationCalculation(this.mesh){
-	if(this.rotateCount+1<this.speed){
-		this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-		this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-		this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
+function rotationCalculation(c,x,y,z){
+	if(c.rotateCount+1<c.speed){
+		c.mesh.rotation.x-=((c.beginxyz.x-x!=0)?(c.beginxyz.x-x)/c.speed:x);
+		c.mesh.rotation.y-=((c.beginxyz.y-y!=0)?(c.beginxyz.y-y)/c.speed:y);
+		c.mesh.rotation.z-=((c.beginxyz.z-z!=0)?(c.beginxyz.z-z)/c.speed:z);
 	}else{
-		this.mesh.rotation.x=toPosX;
-		this.mesh.rotation.y=toPosY;
-		this.mesh.rotation.z=toPosZ;
+		c.mesh.rotation.x=x;
+		c.mesh.rotation.y=y;
+		c.mesh.rotation.z=z;
 	}
 }
 function CubeRender(){
@@ -182,77 +182,37 @@ function CubeRender(){
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = 0;
-				if(this.rotateCount+1<this.speed){
-					this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-					this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-					this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
-				}else{
-					this.mesh.rotation.x=toPosX;
-					this.mesh.rotation.y=toPosY;
-					this.mesh.rotation.z=toPosZ;
-				}
+				rotationCalculation(this,toPosX,toPosY,toPosZ);
 			break;
 			case 1: // RIGHT
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = ((Math.PI/(this.speed*2))*this.speed)*2;
-				
+				rotationCalculation(this,toPosX,toPosY,toPosZ);
 			break;
 			case 2: // TOP
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = ((Math.PI/(this.speed*2))*this.speed);
-				if(this.rotateCount+1<this.speed){
-					this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-					this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-					this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
-				}else{
-					this.mesh.rotation.x=toPosX;
-					this.mesh.rotation.y=toPosY;
-					this.mesh.rotation.z=toPosZ;
-				}
+				rotationCalculation(this,toPosX,toPosY,toPosZ);
 			break;
 			case 3: // BOTTOM
 				var toPosX = 0;
 				var toPosY = 0;
 				var toPosZ = ((Math.PI/(this.speed*2))*this.speed)*3;
-				if(this.rotateCount+1<this.speed){
-					this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-					this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-					this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
-				}else{
-					this.mesh.rotation.x=toPosX;
-					this.mesh.rotation.y=toPosY;
-					this.mesh.rotation.z=toPosZ;
-				}
+				rotationCalculation(this,toPosX,toPosY,toPosZ);
 			break;
 			case 4: // FRONT
 				var toPosX = 0;
 				var toPosY = ((Math.PI/(this.speed*2))*this.speed);
 				var toPosZ = 0;
-				if(this.rotateCount+1<this.speed){
-					this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-					this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-					this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
-				}else{
-					this.mesh.rotation.x=toPosX;
-					this.mesh.rotation.y=toPosY;
-					this.mesh.rotation.z=toPosZ;
-				}
+				rotationCalculation(this,toPosX,toPosY,toPosZ);
 			break;
 			case 5: // BACK
 				var toPosX = 0;
 				var toPosY = ((Math.PI/(this.speed*2))*this.speed)*3;
 				var toPosZ = 0;
-				if(this.rotateCount+1<this.speed){
-					this.mesh.rotation.x-=((this.beginxyz.x-toPosX!=0)?(this.beginxyz.x-toPosX)/this.speed:toPosX);
-					this.mesh.rotation.y-=((this.beginxyz.y-toPosY!=0)?(this.beginxyz.y-toPosY)/this.speed:toPosY);
-					this.mesh.rotation.z-=((this.beginxyz.z-toPosZ!=0)?(this.beginxyz.z-toPosZ)/this.speed:toPosZ);
-				}else{
-					this.mesh.rotation.x=toPosX;
-					this.mesh.rotation.y=toPosY;
-					this.mesh.rotation.z=toPosZ;
-				}
+				rotationCalculation(this,toPosX,toPosY,toPosZ);
 			break;
 		}
 		this.rotateCount++;
