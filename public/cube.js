@@ -27,6 +27,7 @@ function Cube(size,x,y,z){
 			if(this.voxel[ix][iy]== undefined)
 				this.voxel[ix][iy]=new Array();
 			for(var iz = this.padding;iz < (size+this.padding);iz++){
+				//size+this.padding
 				this.voxel[ix][iy][iz] = 1;
 			}
 		}
