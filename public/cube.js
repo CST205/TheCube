@@ -1,3 +1,4 @@
+//This is the javascript file responsible for creating the cube.
 function Cube(size,x,y,z){
 	this.settings={
 		onFinish:function(c){},
